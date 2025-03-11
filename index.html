@@ -3,13 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
     <link href="./output.css" rel="stylesheet">
+    <script src="script.js" defer></script>
 </head>
 <body class="bg-gray-500">
-    <div id="mainContent" class="flex">
-        <h1 class="">Hello!</h1>
-        <button class="bg-red-500 text-white px-4 py-2 rounded">Button 1</button>
-    </div>
-    <script src="script.js"></script>
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 MovieApp</a>
+            <div id="searchBar" class="hidden md:flex items-center bg-gray-700 rounded-lg p-2">
+                <input id="searchInput" 
+                    type="text" 
+                    placeholder="Search movies..." 
+                    class="bg-transparent outline-none text-white px-2 placeholder-gray-400"
+                >
+                <button id="searchButton" class="ml-2 px-4 py-1 bg-red-500 rounded-lg hover:bg-red-600">Search</button>
+            </div>
+            <a href="#" id="savedMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
+
+            <!-- Mobile Menu Button -->
+            <button id="menuButton" class="md:hidden text-white text-2xl">
+                ☰
+            </button>
+        </div>
+        <!-- Mobile Menu (Hidden by Default) -->
+        <div id="mobileMenu" class="hidden md:hidden mt-4 text-center">
+            <input 
+                type="text" 
+                placeholder="Search movies..." 
+                class="bg-gray-700 text-white px-4 py-2 rounded-lg w-full"
+            >
+            <a href="#" class="block mt-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
+        </div>
+    </nav>
 </body>
 </html>
