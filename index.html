@@ -10,10 +10,10 @@
 <body class="bg-gray-900 text-white">
 
     <nav class="bg-gray-800 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 MovieApp</a>
+        <div class="container mx-auto relative flex justify-between items-center">
+            <a href="index.html" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 MovieApp</a>
             
-            <div id="searchBar" class="hidden md:flex items-center bg-gray-700 rounded-lg p-2">
+            <div id="searchBar" class="hidden md:flex items-center bg-gray-700 rounded-lg p-2 absolute left-1/2 transform -translate-x-1/2">
                 <input id="searchInput" 
                     type="text" 
                     placeholder="Search movies..." 
@@ -21,10 +21,16 @@
                 >
                 <button id="searchButton" class="ml-2 px-4 py-1 bg-red-500 rounded-lg hover:bg-red-600">Search</button>
             </div>
-
-            <a href="#" id="savedMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
+        
+            <div class="flex gap-3">
+                <a href="#" id="savedMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
+                <a href="#" id="signInButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Sign In</a>
+            </div>
             
-            <button id="menuButton" class="md:hidden text-white text-2xl">☰</button>
+            <div class="md:hidden">
+                <button id="menuButton" class="md:hidden text-white text-2xl">☰</button>
+                <button id="signInButtonMobile" class="md:hidden text-white px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Sign In</button>
+            </div>
         </div>
 
         <!-- Mobile Menu (Hidden by Default) -->
@@ -33,6 +39,11 @@
             <a href="#" class="block mt-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
         </div>
     </nav>
-    <div id="moviesContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4"></div>
+
+    <h1 id="popularMoviesHeader" class="flex flex-col items-center text-center lg:text-8xl sm:text-6xl text-5xl font-bold my-20">
+        Popular Movies
+    </h1>
+
+    <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mx-5 px-3 md:mx-20 my-3.5 py-3.5 bg-gray-800 rounded-2xl"></div>
 </body>
 </html>

@@ -45,6 +45,13 @@ async function searchMovies(query) {
         const response = await fetch(url);
         const data = await response.json();
         displayMovies(data.results);
+
+        // Update the heading with search results
+        const header = document.getElementById('popularMoviesHeader');
+        header.innerHTML = `
+            Showing Results For
+            <span class="text-red-500 bg-gray-800 text-4xl mt-8 px-3 py-2">${query}</span>
+        `;
     } catch (error) {
         console.error('Error searching movies:', error);
     }
