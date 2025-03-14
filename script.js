@@ -1,28 +1,72 @@
+/*---------------------------
+    Global Variables
+    ---------------------------*/
+
 const hamburgerMenu = document.getElementById("menuButton");
+let currentPage = 1;
+const moviesPerPage = 20;
+let isSearchMode = false;  // Track whether we're in search mode
+let searchQuery = '';  // Store the search query
+
+const API_KEY = "bc44aff762863c9f76e5249ca577be5c";
+const BASE_URL = "https://api.themoviedb.org/3";
+
+/*---------------------------
+    Event Liastners
+    ---------------------------*/
 
 hamburgerMenu.addEventListener("click", function() {
     document.getElementById("mobileMenu").classList.toggle('hidden');
 });
 
-const API_KEY = "bc44aff762863c9f76e5249ca577be5c";
-const BASE_URL = "https://api.themoviedb.org/3"; 
+document.getElementById('searchInput').addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+        searchQuery = e.target.value.trim();  // Update the search query
+        currentPage = 1;  // Reset page number for new search
+        isSearchMode = true;  // Switch to search mode
+        searchMovies(searchQuery);  // Perform the search
+    }
+});
+
+document.getElementById('searchButton').addEventListener('click', () => {
+    searchQuery = document.getElementById('searchInput').value.trim();  
+    if (searchQuery !== '') {
+        currentPage = 1;  // Reset page number for new search
+        isSearchMode = true;  // Switch to search mode
+        searchMovies(searchQuery);  // Perform the search
+    }
+});
+
+document.getElementById('loadMoreButton').addEventListener('click', () => {
+    currentPage++; 
+    isSearchMode ? searchMovies(searchQuery, currentPage) : fetchPopularMovies(currentPage);
+});
+
+/*---------------------------
+    Functions
+    ---------------------------*/
 
 // Function to fetch and display popular movies
-async function fetchPopularMovies() {
+async function fetchPopularMovies(page = 1) {
     try {
-        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
         const data = await response.json();
-        displayMovies(data.results);
+        displayMovies(data.results, false); // Append new movies without clearing
     } catch (error) {
         console.error("Error fetching movies:", error);
     }
 }
 
 // Function to display movies on the page
-function displayMovies(movies) {
+function displayMovies(movies, clearContainer = false) {
     const container = document.getElementById('moviesContainer');
-    container.innerHTML = ''; // Clear previous movies
 
+    // Clear container only when needed (e.g., when performing a new search)
+    if (clearContainer) {
+        container.innerHTML = '';
+    }
+
+    // Append new movies to the container
     movies.forEach(movie => {
         const movieElement = document.createElement('div');
         movieElement.classList.add('bg-gray-800', 'rounded-lg', 'p-2', 'text-center');
@@ -37,14 +81,17 @@ function displayMovies(movies) {
     });
 }
 
-// Function to search for movies
-async function searchMovies(query) {
-    const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`;
+async function searchMovies(query, page = 1) {
+    const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        displayMovies(data.results);
+
+        // Only clear the container on the first page
+        const clearContainer = page === 1;
+
+        displayMovies(data.results, clearContainer);
 
         // Update the heading with search results
         const header = document.getElementById('popularMoviesHeader');
@@ -57,17 +104,5 @@ async function searchMovies(query) {
     }
 }
 
-document.getElementById('searchInput').addEventListener('keyup', (e) => {
-    if (e.key === 'Enter' && e.target.value.trim() !== '') {
-        searchMovies(e.target.value.trim());
-    }
-});
-
-document.getElementById('searchButton').addEventListener('click', () => {
-    const query = document.getElementById('searchInput').value.trim();
-    if (query !== '') {
-        searchMovies(query);
-    }
-});
-
+// Gets popular movies on page load
 fetchPopularMovies();
