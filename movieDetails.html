@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <link href="./output.css" rel="stylesheet">
+    <script src="movieDetails.js" defer></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto relative flex justify-between items-center">
+            <a href="index.html" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 MovieApp</a>
+        
+            <a href="index.html" id="backToHomeButton" class="hidden md:block px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</a>
+            
+            <button id="signInButtonMobile" class="md:hidden text-white px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</button>
+        </div>
+
+        <!-- Mobile Menu (Hidden by Default) -->
+        <div id="mobileMenu" class="hidden md:hidden mt-4 text-center">
+            <input type="text" placeholder="Search movies..." class="bg-gray-700 text-white px-4 py-2 rounded-lg w-full">
+            <a href="#" class="block mt-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
+        </div>
+    </nav>
+
+    <div id="movieDetails" class="container mx-auto my-10 p-5 bg-gray-800 rounded-lg"></div>
+
+    <div class="text-center my-5">
+        <a href="index.html" class="px-6 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</a>
+    </div>
+</body>
+
+</html>

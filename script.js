@@ -61,22 +61,20 @@ async function fetchPopularMovies(page = 1) {
 function displayMovies(movies, clearContainer = false) {
     const container = document.getElementById('moviesContainer');
 
-    // Clear container only when needed (e.g., when performing a new search)
     if (clearContainer) {
         container.innerHTML = '';
     }
 
-    // Append new movies to the container
     movies.forEach(movie => {
         const movieElement = document.createElement('div');
         movieElement.classList.add('bg-gray-800', 'rounded-lg', 'p-2', 'text-center');
-
         movieElement.innerHTML = `
-            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="rounded-lg">
-            <h3 class="text-lg mt-2">${movie.title}</h3>
-            <p class="text-sm text-gray-400">${movie.release_date}</p>
+            <a href="movieDetails.html?id=${movie.id}">
+                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="rounded-lg">
+                <h3 class="text-lg mt-2">${movie.title}</h3>
+                <p class="text-sm text-gray-400">${movie.release_date}</p>
+            </a>
         `;
-
         container.appendChild(movieElement);
     });
 }
