@@ -13,10 +13,16 @@
     <nav class="bg-gray-800 p-4">
         <div class="container mx-auto relative flex justify-between items-center">
             <a href="index.html" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 MovieApp</a>
-        
-            <a href="index.html" id="backToHomeButton" class="hidden md:block px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</a>
+
+            <div class="flex row gap-3">
+                <div id="movieSavedNotification" class="hidden md:block bg-gray-800 text-white py-2 px-4 rounded-md opacity-0 transition-opacity duration-500">
+                    Movie Saved!
+                </div>
+                <a href="#" id="saveMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Save Movie</a>
+                <a href="index.html" id="backToHomeButton" class="hidden md:block px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</a>
+            </div>
             
-            <button id="signInButtonMobile" class="md:hidden text-white px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</button>
+            <a href="index.html" id="signInButtonMobile" class="md:hidden text-white px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Back to Home</a>
         </div>
     </nav>
 
