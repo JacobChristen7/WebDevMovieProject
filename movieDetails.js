@@ -39,7 +39,19 @@ async function fetchMovieDetails() {
                     <p class="text-gray-400 mb-2">🎬 Release Date: ${movie.release_date}</p>
                     <p class="text-gray-400 mb-2">🎥 Runtime: ${movie.runtime} minutes</p>
                     <p class="text-gray-400 mb-8">⭐ Rating: ${movie.vote_average}</p>
-                    <div class="flex flex-wrap gap-2">
+                    
+                    <div class="flex items-center space-x-2 mt-4">
+                        <span class="text-lg font-medium text-white">Rate this movie:</span>
+                        <div class="flex space-x-1" id="starRating">
+                            <span class="star cursor-pointer text-gray-400 text-2xl" data-value="1">&#9733;</span>
+                            <span class="star cursor-pointer text-gray-400 text-2xl" data-value="2">&#9733;</span>
+                            <span class="star cursor-pointer text-gray-400 text-2xl" data-value="3">&#9733;</span>
+                            <span class="star cursor-pointer text-gray-400 text-2xl" data-value="4">&#9733;</span>
+                            <span class="star cursor-pointer text-gray-400 text-2xl" data-value="5">&#9733;</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mt-4">
                         ${movie.genres.map(genre => `
                             <span class="bg-gray-600 text-white text-sm font-semibold px-4 py-1 rounded-full">${genre.name}</span>
                         `).join('')}
@@ -51,13 +63,61 @@ async function fetchMovieDetails() {
                 ${castList}
             </div>
         `;
+
+        // Attach event listeners to stars after rendering
+        setupStarRating();
     } catch (error) {
         console.error('Error fetching movie details:', error);
     }
 }
 
-fetchMovieDetails();
+// Function to handle star rating
+function setupStarRating() {
+    const stars = document.querySelectorAll("#starRating .star");
 
+    // Retrieve saved rating for this movie
+    let savedRating = localStorage.getItem(`rating-${movieId}`);
+
+    if (savedRating) {
+        highlightStars(savedRating);
+    }
+
+    stars.forEach(star => {
+        star.addEventListener("click", function () {
+            let rating = this.getAttribute("data-value");
+
+            // If the clicked rating is the same as the saved one, reset to 0
+            if (savedRating === rating) {
+                localStorage.removeItem(`rating-${movieId}`);
+                highlightStars(0);
+                savedRating = null;
+                console.log("Rating reset to 0 stars");
+            } else {
+                // Save new rating
+                localStorage.setItem(`rating-${movieId}`, rating);
+                highlightStars(rating);
+                savedRating = rating;
+                console.log(`You rated this movie: ${rating} stars`);
+            }
+        });
+    });
+}
+
+// Function to highlight stars based on rating
+function highlightStars(rating) {
+    const stars = document.querySelectorAll("#starRating .star");
+    stars.forEach(s => {
+        if (s.getAttribute("data-value") <= rating) {
+            s.classList.remove("text-gray-400");
+            s.classList.add("text-yellow-400");
+        } else {
+            s.classList.remove("text-yellow-400");
+            s.classList.add("text-gray-400");
+        }
+    });
+}
+
+// Handle saving movie to localStorage
 window.onload = function () {
     document.getElementById('saveMovieButton').addEventListener('click', () => {
         if (movie) {
@@ -73,13 +133,12 @@ window.onload = function () {
     });
 };
 
-// Show notification
 function showNotification(message) {
     const notification = document.getElementById('movieSavedNotification');
     notification.textContent = message;
     notification.classList.add('show');
 
-    // Remove the notification after 3 seconds
+    // Remove the notification after set time
     setTimeout(() => {
         notification.classList.remove('show');
     }, 2500);
@@ -98,3 +157,6 @@ function saveMovieToLocalStorage(movie) {
         showNotification("Movie is already saved.");
     }
 }
+
+// Fetch movie details on page load
+fetchMovieDetails();
