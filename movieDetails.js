@@ -160,3 +160,128 @@ function saveMovieToLocalStorage(movie) {
 
 // Fetch movie details on page load
 fetchMovieDetails();
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const commentList = document.getElementById("commentList");
+    const commentInput = document.getElementById("commentInput");
+    const nameInput = document.getElementById("nameInput");
+
+    // Get the current movie ID from the URL
+    const movieId = new URLSearchParams(window.location.search).get("id");
+
+    if (!movieId) {
+        console.error("Movie ID not found in URL.");
+        return;
+    }
+
+    // Dummy comments with names
+    const dummyComments = [
+        { name: "Alex", text: "Amazing movie! Highly recommend." },
+        { name: "Jamie", text: "Not my favorite, but the story was decent." },
+        { name: "Chris", text: "Loved the cinematography!" },
+        { name: "Taylor", text: "Great performances by the cast." },
+        { name: "Jordan", text: "Could have been better, but still enjoyable." },
+        { name: "Morgan", text: "A masterpiece, would watch again!" },
+        { name: "Sam", text: "Soundtrack was on point!" }
+    ];
+
+    function getRandomComments(count) {
+        return dummyComments.sort(() => Math.random() - 0.5).slice(0, count);
+    }
+
+    // Load comments (dummy + user comments)
+    function loadComments() {
+        commentList.innerHTML = ""; // Clear existing comments
+
+        // Get stored comments for this movie
+        const storedComments = JSON.parse(localStorage.getItem(`comments-${movieId}`)) || [];
+
+        // Get random dummy comments (e.g., 3)
+        const randomComments = getRandomComments(3);
+
+        // Render dummy comments
+        randomComments.forEach(({ name, text }) => {
+            const commentEl = createCommentElement(name, text, false);
+            commentList.appendChild(commentEl);
+        });
+
+        // Render stored user comments with delete button
+        storedComments.forEach(({ name, text, isUserComment }) => {
+            const commentEl = createCommentElement(name, text, isUserComment);
+            commentList.appendChild(commentEl);
+        });
+    }
+
+    function createCommentElement(name, text, isUserComment) {
+        const li = document.createElement("li");
+        li.classList.add("bg-gray-700", "p-3", "rounded-lg", "mb-2", "text-white");
+
+        // Container for name and delete button (flexbox)
+        const topContainer = document.createElement("div");
+        topContainer.classList.add("flex", "justify-between", "items-start");
+
+        // Name Element (blue & bold)
+        const nameElement = document.createElement("p");
+        nameElement.textContent = name;
+        nameElement.classList.add("text-blue-400", "font-semibold", "mb-1");
+
+        topContainer.appendChild(nameElement);
+
+        if (isUserComment) {
+            // Delete Button (top-right aligned)
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("text-red-500", "hover:underline", "text-sm");
+            deleteButton.addEventListener("click", () => {
+                deleteComment(name, text);
+                li.remove();
+            });
+            topContainer.appendChild(deleteButton);
+        }
+
+        // Comment Text
+        const commentText = document.createElement("p");
+        commentText.textContent = text;
+
+        // Append elements to the comment box
+        li.appendChild(topContainer);
+        li.appendChild(commentText);
+
+        return li;
+    }
+
+    function saveComment(name, text) {
+        const comments = JSON.parse(localStorage.getItem(`comments-${movieId}`)) || [];
+        comments.push({ name, text, isUserComment: true }); // Mark as user comment
+        localStorage.setItem(`comments-${movieId}`, JSON.stringify(comments));
+    }
+
+    function deleteComment(name, text) {
+        let comments = JSON.parse(localStorage.getItem(`comments-${movieId}`)) || [];
+        comments = comments.filter(comment => !(comment.name === name && comment.text === text));
+        localStorage.setItem(`comments-${movieId}`, JSON.stringify(comments));
+    }
+
+    document.querySelector("button[onclick='addComment()']").addEventListener("click", () => {
+        const userName = nameInput.value.trim();
+        const userComment = commentInput.value.trim();
+
+        if (userName && userComment) {
+            const commentEl = createCommentElement(userName, userComment, true);
+            commentList.appendChild(commentEl);
+            saveComment(userName, userComment);
+            nameInput.value = "";
+            commentInput.value = "";
+        }
+    });
+
+    loadComments();
+});
