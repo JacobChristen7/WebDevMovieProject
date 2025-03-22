@@ -1,11 +1,19 @@
+/*---------------------------
+    Global Variables
+    ---------------------------*/
+
 const API_KEY = "bc44aff762863c9f76e5249ca577be5c";
 const BASE_URL = "https://api.themoviedb.org/3";
 
-let movie; // Declare movie globally
+let movie; // Movie needs to be global
 
 // Get movie ID from the URL
 const urlParams = new URLSearchParams(window.location.search);
 const movieId = urlParams.get('id');
+
+/*---------------------------
+    Movie Details Functions
+    ---------------------------*/
 
 // Fetch and display movie details
 async function fetchMovieDetails() {
@@ -161,13 +169,9 @@ function saveMovieToLocalStorage(movie) {
 // Fetch movie details on page load
 fetchMovieDetails();
 
-
-
-
-
-
-
-
+/*---------------------------
+    Comments Section Functions
+    ---------------------------*/
 
 document.addEventListener("DOMContentLoaded", () => {
     const commentList = document.getElementById("commentList");
@@ -224,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const li = document.createElement("li");
         li.classList.add("bg-gray-700", "p-3", "rounded-lg", "mb-2", "text-white");
 
-        // Container for name and delete button (flexbox)
+        // Container for name and delete button
         const topContainer = document.createElement("div");
         topContainer.classList.add("flex", "justify-between", "items-start");
 
@@ -236,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
         topContainer.appendChild(nameElement);
 
         if (isUserComment) {
-            // Delete Button (top-right aligned)
+            // Delete Button for user made comments
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete";
             deleteButton.classList.add("text-red-500", "hover:underline", "text-sm");
