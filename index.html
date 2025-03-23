@@ -9,34 +9,64 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-    <nav class="bg-gray-800 p-4">
-        <div class="container mx-auto relative flex justify-between items-center">
-            <a href="index.html" id="movie-logo" class="text-2xl font-bold text-red-500">🎬 CinemaList</a>
-            
-            <div id="searchBar" class="hidden md:flex items-center bg-gray-700 rounded-lg p-2 absolute left-1/2 transform -translate-x-1/2">
-                <input id="searchInput" 
-                    type="text" 
-                    placeholder="Search movies..." 
-                    class="bg-transparent outline-none text-white px-2 placeholder-gray-400"
-                >
-                <button id="searchButton" class="ml-2 px-4 py-1 bg-red-500 rounded-lg hover:bg-red-600">Search</button>
+    <nav class="bg-gray-800 p-3">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="index.html" id="movie-logo" class="text-2xl font-bold text-red-500 whitespace-nowrap">🎬 CinemaList</a>
+    
+            <!-- Centered Search Bar & Dropdown -->
+            <div class="flex-1 flex justify-center items-center">
+                <div class="relative flex items-center">
+                    <!-- Dropdown Trigger -->
+                    <div id="dropdown-trigger" class="cursor-pointer p-2 hidden md:block">
+                        ▼
+                    </div>
+    
+                    <!-- Search Bar -->
+                    <div id="searchBar" class="hidden md:flex items-center bg-gray-700 rounded-lg p-2 ml-2">
+                        <input id="searchInput" 
+                            type="text" 
+                            placeholder="Search movies..." 
+                            class="bg-transparent outline-none text-white px-2 placeholder-gray-400"
+                        >
+                        <button id="searchButton" class="ml-2 px-4 py-1 bg-red-500 rounded-lg hover:bg-red-600">Search</button>
+                    </div>
+    
+                    <!-- Filter Dropdown Box -->
+                    <div id="dropdown-box" class="absolute left-0 md:left-auto mt-80 w-64 bg-gray-800 border shadow-lg hidden p-4 rounded-lg text-white">
+                        <h3 class="text-lg font-semibold mb-2">Filter Movies</h3>
+    
+                        <!-- Genre Filter -->
+                        <label for="genreFilter" class="block text-sm mb-1">Genre:</label>
+                        <select id="genreFilter" class="w-full p-2 bg-gray-700 text-white rounded">
+                            <option value="">All Genres</option>
+                        </select>
+    
+                        <!-- Release Year Filter -->
+                        <label for="yearFilter" class="block text-sm mt-3 mb-1">Release Year:</label>
+                        <input type="number" id="yearFilter" placeholder="Enter year" class="w-full p-2 bg-gray-700 text-white rounded">
+    
+                        <!-- Rating Filter -->
+                        <label for="ratingFilter" class="block text-sm mt-3 mb-1">Minimum Rating:</label>
+                        <input type="number" id="ratingFilter" min="0" max="10" step="0.1" placeholder="e.g. 7.5" class="w-full p-2 bg-gray-700 text-white rounded">
+    
+                        <!-- Apply Filter Button -->
+                        <button id="applyFilters" class="mt-4 w-full bg-red-500 p-2 rounded-lg hover:bg-red-600">Apply Filters</button>
+                    </div>
+                </div>
             </div>
-        
+    
+            <!-- Right-side Buttons -->
             <div class="flex gap-3">
-                <a href="savedMovies.html" id="savedMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
-                <a href="#" id="signInButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Sign In</a>
+                <a href="savedMovies.html" id="savedMovieButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600 whitespace-nowrap">Saved Movies</a>
+                <a href="#" id="signInButton" class="hidden md:block px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600 whitespace-nowrap">Sign In</a>
             </div>
-            
+    
+            <!-- Mobile Menu -->
             <div class="md:hidden">
                 <button id="menuButton" class="md:hidden text-white text-2xl">☰</button>
                 <button id="signInButtonMobile" class="md:hidden text-white px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Sign In</button>
             </div>
-        </div>
-
-        <!-- Mobile Menu (Hidden by Default) -->
-        <div id="mobileMenu" class="hidden md:hidden mt-4 text-center">
-            <input type="text" placeholder="Search movies..." class="bg-gray-700 text-white px-4 py-2 rounded-lg w-full">
-            <a href="savedMovies.html" class="block mt-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Saved Movies</a>
         </div>
     </nav>
 

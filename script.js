@@ -7,6 +7,12 @@ let currentPage = 1;
 const moviesPerPage = 20;
 let isSearchMode = false;  // Track whether we're in search mode
 let searchQuery = '';  // Store the search query
+const genreFilter = document.getElementById('genreFilter');
+const yearFilter = document.getElementById('yearFilter');
+const ratingFilter = document.getElementById('ratingFilter');
+const applyFilters = document.getElementById('applyFilters');
+const dropdownTrigger = document.getElementById('dropdown-trigger');
+const dropdownBox = document.getElementById('dropdown-box')
 
 const API_KEY = "bc44aff762863c9f76e5249ca577be5c";
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -37,9 +43,62 @@ document.getElementById('searchButton').addEventListener('click', () => {
     }
 });
 
+// Show/Hide Dropdown on Hover
+dropdownTrigger.addEventListener('mouseenter', () => dropdownBox.classList.remove('hidden'));
+dropdownBox.addEventListener('mouseleave', () => dropdownBox.classList.add('hidden'));
+
+// Fetch Genres from TMDB API
+async function fetchGenres() {
+    const response = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+    const data = await response.json();
+    
+    genreFilter.innerHTML = '<option value="">All Genres</option>';
+    data.genres.forEach(genre => {
+        genreFilter.innerHTML += `<option value="${genre.id}">${genre.name}</option>`;
+    });
+}
+
+// Filter Movies Function
+async function fetchFilteredMovies(page = 1, append = false) {
+    const genre = genreFilter.value;
+    const year = yearFilter.value;
+    const rating = ratingFilter.value;
+
+    let filterUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&page=${page}`;
+
+    if (genre) filterUrl += `&with_genres=${genre}`;
+    if (year) filterUrl += `&primary_release_year=${year}`;
+    if (rating) filterUrl += `&vote_average.gte=${rating}`;
+
+    try {
+        const response = await fetch(filterUrl);
+        const data = await response.json();
+
+        // If append is false, clear existing movies
+        displayMovies(data.results, !append);
+    } catch (error) {
+        console.error("Error fetching filtered movies:", error);
+    }
+}
+
+// Event Listener for Apply Filters Button
+applyFilters.addEventListener('click', () => {
+    currentPage = 1;  // Reset pagination
+    fetchFilteredMovies(currentPage, false);  // Load filtered movies (clear container)
+    dropdownBox.classList.add('hidden'); // Close dropdown
+    isSearchMode = false;  // Ensure Load More works correctly for filters
+});
+
+// Call fetchGenres when the page loads
+fetchGenres();
+
 document.getElementById('loadMoreButton').addEventListener('click', () => {
     currentPage++; 
-    isSearchMode ? searchMovies(searchQuery, currentPage) : fetchPopularMovies(currentPage);
+    if (isSearchMode) {
+        searchMovies(searchQuery, currentPage);
+    } else {
+        fetchFilteredMovies(currentPage, true);  // Append more filtered movies
+    }
 });
 
 /*---------------------------
