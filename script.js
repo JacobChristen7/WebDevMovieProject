@@ -179,3 +179,116 @@ async function searchMovies(query, page = 1, append = false) {
 
 // Gets popular movies on page load
 fetchPopularMovies();
+
+/*---------------------------
+    Mobile Menu Functionality
+---------------------------*/
+
+const mobileMenu = document.getElementById("mobileMenu");
+const mobileSearchContainer = document.createElement("div");
+const mobileFilterContainer = document.createElement("div");
+const mobileSearchToggle = document.createElement("button");
+const mobileFilterToggle = document.createElement("button");
+
+// Configure Mobile Search Toggle
+mobileSearchToggle.textContent = "🔍 Search Movies";
+mobileSearchToggle.classList.add("block", "w-full", "text-center", "px-4", "py-2", "bg-gray-700", "rounded-lg", "hover:bg-gray-600", "mt-2");
+
+// Configure Mobile Filter Toggle
+mobileFilterToggle.textContent = "⚙️ Filter Movies";
+mobileFilterToggle.classList.add("block", "w-full", "text-center", "px-4", "py-2", "bg-gray-700", "rounded-lg", "hover:bg-gray-600", "mt-2");
+
+// Mobile Search Input and Button
+mobileSearchContainer.innerHTML = `
+    <div class="flex items-center bg-gray-700 rounded-lg p-2 mt-2">
+        <input id="mobileSearchInput" type="text" placeholder="Search movies..." class="bg-transparent outline-none text-white px-2 placeholder-gray-400 w-full">
+        <button id="mobileSearchButton" class="ml-2 px-4 py-1 bg-red-500 rounded-lg hover:bg-red-600">Search</button>
+    </div>
+`;
+mobileSearchContainer.classList.add("hidden");
+
+// Mobile Filter Dropdown UI
+mobileFilterContainer.innerHTML = `
+    <div class="bg-gray-800 p-4 rounded-lg mt-2 shadow-lg">
+        <h3 class="text-lg font-semibold text-white mb-2">Filter Movies</h3>
+
+        <label for="mobileGenreFilter" class="block text-sm text-white mb-1">Genre:</label>
+        <select id="mobileGenreFilter" class="w-full p-2 bg-gray-700 text-white rounded">
+            <option value="">All Genres</option>
+        </select>
+
+        <label for="mobileYearFilter" class="block text-sm text-white mt-3 mb-1">Release Year:</label>
+        <input type="number" id="mobileYearFilter" placeholder="Enter year" class="w-full p-2 bg-gray-700 text-white rounded">
+
+        <label for="mobileRatingFilter" class="block text-sm text-white mt-3 mb-1">Minimum Rating:</label>
+        <input type="number" id="mobileRatingFilter" min="0" max="10" step="0.1" placeholder="e.g. 7.5" class="w-full p-2 bg-gray-700 text-white rounded">
+
+        <button id="applyMobileFilters" class="mt-4 w-full bg-red-500 p-2 rounded-lg hover:bg-red-600">Apply Filters</button>
+    </div>
+`;
+mobileFilterContainer.classList.add("hidden");
+
+// Append search and filter buttons to the mobile menu
+mobileMenu.appendChild(mobileSearchToggle);
+mobileMenu.appendChild(mobileSearchContainer);
+mobileMenu.appendChild(mobileFilterToggle);
+mobileMenu.appendChild(mobileFilterContainer);
+
+// Toggle Mobile Search
+mobileSearchToggle.addEventListener("click", () => {
+    mobileSearchContainer.classList.toggle("hidden");
+    mobileFilterContainer.classList.add("hidden"); // Hide filter if open
+});
+
+// Toggle Mobile Filter
+mobileFilterToggle.addEventListener("click", () => {
+    mobileFilterContainer.classList.toggle("hidden");
+    mobileSearchContainer.classList.add("hidden"); // Hide search if open
+});
+
+// Mobile Search Functionality
+document.getElementById("mobileSearchInput").addEventListener("keyup", (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+        searchQuery = e.target.value.trim();
+        currentPage = 1;
+        isSearchMode = true;
+        searchMovies(searchQuery, currentPage, false);
+    }
+});
+
+document.getElementById("mobileSearchButton").addEventListener("click", () => {
+    searchQuery = document.getElementById("mobileSearchInput").value.trim();
+    if (searchQuery !== "") {
+        currentPage = 1;
+        isSearchMode = true;
+        searchMovies(searchQuery, currentPage, false);
+    }
+});
+
+// Mobile Filter Functionality
+document.getElementById("applyMobileFilters").addEventListener("click", () => {
+    genreFilter.value = document.getElementById("mobileGenreFilter").value;
+    yearFilter.value = document.getElementById("mobileYearFilter").value;
+    ratingFilter.value = document.getElementById("mobileRatingFilter").value;
+
+    currentPage = 1;
+    fetchFilteredMovies(currentPage, false);
+    mobileFilterContainer.classList.add("hidden"); // Close dropdown after applying filters
+    isSearchMode = false;
+});
+
+// Fetch and Populate Mobile Genre Options
+async function fetchGenresMobile() {
+    const response = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+    const data = await response.json();
+    
+    const mobileGenreFilter = document.getElementById("mobileGenreFilter");
+    mobileGenreFilter.innerHTML = '<option value="">All Genres</option>';
+    
+    data.genres.forEach((genre) => {
+        mobileGenreFilter.innerHTML += `<option value="${genre.id}">${genre.name}</option>`;
+    });
+}
+
+// Call fetchGenresMobile when the page loads
+fetchGenresMobile();
