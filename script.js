@@ -27,25 +27,60 @@ hamburgerMenu.addEventListener("click", function() {
 
 document.getElementById('searchInput').addEventListener('keyup', (e) => {
     if (e.key === 'Enter' && e.target.value.trim() !== '') {
-        searchQuery = e.target.value.trim();  // Update the search query
-        currentPage = 1;  // Reset page number for new search
-        isSearchMode = true;  // Switch to search mode
-        searchMovies(searchQuery);  // Perform the search
+        searchQuery = e.target.value.trim();  
+        currentPage = 1;
+        isSearchMode = true;  
+        searchMovies(searchQuery, currentPage, false);  // Apply search & filters
     }
 });
 
 document.getElementById('searchButton').addEventListener('click', () => {
     searchQuery = document.getElementById('searchInput').value.trim();  
     if (searchQuery !== '') {
-        currentPage = 1;  // Reset page number for new search
-        isSearchMode = true;  // Switch to search mode
-        searchMovies(searchQuery);  // Perform the search
+        currentPage = 1;
+        isSearchMode = true;  
+        searchMovies(searchQuery, currentPage, false);
     }
 });
 
 // Show/Hide Dropdown on Hover
 dropdownTrigger.addEventListener('mouseenter', () => dropdownBox.classList.remove('hidden'));
 dropdownBox.addEventListener('mouseleave', () => dropdownBox.classList.add('hidden'));
+
+// Event Listener for Apply Filters Button
+applyFilters.addEventListener('click', () => {
+    currentPage = 1;  // Reset pagination
+    fetchFilteredMovies(currentPage, false);  // Load filtered movies (clear container)
+    dropdownBox.classList.add('hidden'); // Close dropdown
+    isSearchMode = false;  // Ensure Load More works correctly for filters
+});
+
+// Call fetchGenres when the page loads
+fetchGenres();
+
+document.getElementById('loadMoreButton').addEventListener('click', () => {
+    currentPage++; 
+    if (isSearchMode) {
+        searchMovies(searchQuery, currentPage, true);  // Append search results with filters
+    } else {
+        fetchFilteredMovies(currentPage, true);  // Append filtered results
+    }
+});
+
+/*---------------------------
+    Functions
+    ---------------------------*/
+
+// Function to fetch and display popular movies
+async function fetchPopularMovies(page = 1) {
+    try {
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
+        const data = await response.json();
+        displayMovies(data.results, false); // Append new movies without clearing
+    } catch (error) {
+        console.error("Error fetching movies:", error);
+    }
+}
 
 // Fetch Genres from TMDB API
 async function fetchGenres() {
@@ -81,41 +116,6 @@ async function fetchFilteredMovies(page = 1, append = false) {
     }
 }
 
-// Event Listener for Apply Filters Button
-applyFilters.addEventListener('click', () => {
-    currentPage = 1;  // Reset pagination
-    fetchFilteredMovies(currentPage, false);  // Load filtered movies (clear container)
-    dropdownBox.classList.add('hidden'); // Close dropdown
-    isSearchMode = false;  // Ensure Load More works correctly for filters
-});
-
-// Call fetchGenres when the page loads
-fetchGenres();
-
-document.getElementById('loadMoreButton').addEventListener('click', () => {
-    currentPage++; 
-    if (isSearchMode) {
-        searchMovies(searchQuery, currentPage);
-    } else {
-        fetchFilteredMovies(currentPage, true);  // Append more filtered movies
-    }
-});
-
-/*---------------------------
-    Functions
-    ---------------------------*/
-
-// Function to fetch and display popular movies
-async function fetchPopularMovies(page = 1) {
-    try {
-        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
-        const data = await response.json();
-        displayMovies(data.results, false); // Append new movies without clearing
-    } catch (error) {
-        console.error("Error fetching movies:", error);
-    }
-}
-
 // Function to display movies on the page
 function displayMovies(movies, clearContainer = false) {
     const container = document.getElementById('moviesContainer');
@@ -138,17 +138,32 @@ function displayMovies(movies, clearContainer = false) {
     });
 }
 
-async function searchMovies(query, page = 1) {
-    const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`;
+async function searchMovies(query, page = 1, append = false) {
+    const genre = genreFilter.value;
+    const year = yearFilter.value;
+    const rating = ratingFilter.value;
+
+    let searchUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(searchUrl);
         const data = await response.json();
 
-        // Only clear the container on the first page
-        const clearContainer = page === 1;
+        // Apply filtering manually after fetching search results
+        let filteredMovies = data.results;
 
-        displayMovies(data.results, clearContainer);
+        if (genre) {
+            filteredMovies = filteredMovies.filter(movie => movie.genre_ids.includes(parseInt(genre)));
+        }
+        if (year) {
+            filteredMovies = filteredMovies.filter(movie => movie.release_date && movie.release_date.startsWith(year));
+        }
+        if (rating) {
+            filteredMovies = filteredMovies.filter(movie => movie.vote_average >= parseFloat(rating));
+        }
+
+        // If append is false, clear the container before displaying new results
+        displayMovies(filteredMovies, !append);
 
         // Update the heading with search results
         const header = document.getElementById('popularMoviesHeader');
@@ -156,8 +171,9 @@ async function searchMovies(query, page = 1) {
             Showing Results For
             <span class="text-red-500 bg-gray-800 text-4xl mt-8 px-3 py-2">${query}</span>
         `;
+
     } catch (error) {
-        console.error('Error searching movies:', error);
+        console.error("Error searching movies:", error);
     }
 }
 
